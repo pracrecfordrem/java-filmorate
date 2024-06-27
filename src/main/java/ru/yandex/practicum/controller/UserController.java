@@ -16,13 +16,11 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        System.out.println("get request being completed");
         return users.values();
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
-        System.out.println("post being completed");
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         } else if (user.getLogin() == null || user.getLogin().contains(" ")) {
