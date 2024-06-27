@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -36,6 +38,7 @@ public class UserController {
             user.setId(getNextId());
         }
         users.put(user.getId(),user);
+        log.info("Добавлен пользователь: " + user);
         return user;
     }
 
@@ -57,6 +60,7 @@ public class UserController {
         } else if (!users.containsKey(user.getId()) || user.getId() == null) {
             throw new ValidationException("ИД изменямого пользователя не может быть равен нулю");
         }
+        log.info("Изменён пользователь: " + user);
         users.put(user.getId(), user);
         return user;
     }

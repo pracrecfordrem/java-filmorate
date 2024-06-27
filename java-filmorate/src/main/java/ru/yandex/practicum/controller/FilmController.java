@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
@@ -38,6 +40,7 @@ public class FilmController {
             film.setId(getNextId());
         }
         films.put(film.getId(),film);
+        log.info("Добавлен фильм: " + film);
         return film;
     }
 
@@ -61,6 +64,7 @@ public class FilmController {
             throw new ValidationException("ИД изменямого фильма не может быть равен нулю");
         }
         films.put(film.getId(),film);
+        log.info("Изменён фильм: " + film);
         return film;
     }
 
