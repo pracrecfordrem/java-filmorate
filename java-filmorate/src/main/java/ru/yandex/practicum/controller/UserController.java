@@ -54,7 +54,7 @@ public class UserController {
         } else if (user.getName() == null) {
             user.setName(user.getLogin());
         } else if (user.getBirthday().isAfter(LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),Calendar.getInstance().get(Calendar.MONTH),Calendar.getInstance().get(Calendar.DAY_OF_MONTH)))) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
+            throw new ValidationException("Дата рождения не может быть в будущем!");
         } else if (!users.containsKey(user.getId()) || user.getId() == null) {
             throw new ValidationException("ИД изменямого пользователя не может быть равен нулю");
         }
