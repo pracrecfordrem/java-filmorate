@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -26,10 +27,8 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
-        if (film.getName() == null || film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
+    public Film create(@RequestBody @Validated Film film) {
+        if (film.getDescription().length() > 200) {
             throw new ValidationException("Длина описания не может быть более 200 символов");
         } else if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
@@ -51,7 +50,7 @@ public class FilmController {
 
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@RequestBody @Validated Film film) {
         if (film.getName() == null || film.getName().isEmpty()) {
             throw new ValidationException("Название фильма не может быть пустым");
         } else if (film.getDescription().length() > 200) {
