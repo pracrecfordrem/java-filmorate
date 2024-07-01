@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -9,11 +8,13 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
+    static final LocalDate MIN_DATE = LocalDate.of(1895,12,28);
     private Long id;
-    @NotNull(message = "Название фильма не может быть пустым")
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
+    @Size(max=200, message = "Длина описания не может быть более 200 символов")
     private String description;
     private LocalDate releaseDate;
+    @Min(value = 0, message = "Продолжительность фильма не может быть отрицательным значением.")
     private Long duration;
 }

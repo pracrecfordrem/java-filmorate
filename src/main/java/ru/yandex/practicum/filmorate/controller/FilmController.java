@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -27,13 +27,9 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody @Validated Film film) {
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("Длина описания не может быть более 200 символов");
-        } else if (film.getReleaseDate().isBefore(MIN_DATE)) {
+    public Film create(@RequestBody @Valid Film film) {
+        if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
-        } else if (film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма не может быть отрицательным значением.");
         }
         if (film.getId() == null) {
             film.setId(getNextId());
@@ -50,17 +46,11 @@ public class FilmController {
 
 
     @PutMapping
-    public Film update(@RequestBody @Validated Film film) {
-        if (film.getName() == null || film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
-            throw new ValidationException("Длина описания не может быть более 200 символов");
-        } else if (film.getReleaseDate().isBefore(MIN_DATE)) {
+    public Film update(@RequestBody @Valid Film film) {
+        if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
-        } else if (film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма не может быть отрицательным значением.");
         } else if (!films.containsKey(film.getId()) || film.getId() == null) {
-            throw new ValidationException("ИД изменямого фильма не может быть равен нулю");
+            throw new ValidationException("ИД изменямого фильма не может быть пустым");
         }
         films.put(film.getId(),film);
         log.info("Изменён фильм: " + film);
