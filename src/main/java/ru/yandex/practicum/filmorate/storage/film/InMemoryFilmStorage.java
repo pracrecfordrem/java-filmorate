@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate MIN_DATE = LocalDate.of(1895,12,28);

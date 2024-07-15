@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -45,15 +46,14 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
+        Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
         if (count <= 0) {
             throw new ValidationException("Count должен быть больше 0");
-//        } else if (count > filmStorage.findAll().size()){
-//            throw new NotFoundException("Параметр count превышает количество фильмов");
-        } else {
+       } else {
             if (count > filmStorage.findAll().size()) {
-                return filmStorage.findAll().stream().sorted().toList();
+                return filmStorage.findAll().stream().sorted(comparator).toList();
             }
-            List<Film> res = filmStorage.findAll().stream().sorted().toList();
+            List<Film> res = filmStorage.findAll().stream().sorted(comparator).toList();
             return res.subList(0,count - 1);
         }
     }
