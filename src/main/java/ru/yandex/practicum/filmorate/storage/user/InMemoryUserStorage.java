@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -54,7 +54,7 @@ public class InMemoryUserStorage implements UserStorage{
             user.setName(user.getLogin());
         } else if (user.getId() == null) {
             throw new ValidationException("ИД изменямого пользователя не может быть равен нулю");
-        } else if (!users.containsKey(user.getId())){
+        } else if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Не найден изменяемый пользователь");
         }
         log.info("Изменён пользователь: " + user);
