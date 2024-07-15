@@ -56,4 +56,8 @@ public class InMemoryUserStorage implements UserStorage{
         users.put(user.getId(), user);
         return user;
     }
+
+    public User getUserById(Long userId) {
+        return users.get(userId);
+    }
 }
