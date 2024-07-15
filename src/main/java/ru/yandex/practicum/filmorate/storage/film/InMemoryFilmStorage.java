@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -49,11 +51,30 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film update(@RequestBody @Valid Film film) {
         if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
-        } else if (!films.containsKey(film.getId()) || film.getId() == null) {
+        } else if (film.getId() == null) {
             throw new ValidationException("ИД изменямого фильма не может быть пустым");
+        } else if (!films.containsKey(film.getId())) {
+            throw new NotFoundException("Не найден изменяемый фильм");
         }
         films.put(film.getId(),film);
         log.info("Изменён фильм: " + film);
         return film;
+    }
+
+    @Override
+    public Film getFilmById(Long filmId) {
+        return films.get(filmId);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidation(final ValidationException e) {
+        return Map.of("error", "Произошла ошибка валидации одного из параметров: " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFound(final NotFoundException e) {
+        return Map.of("error", "Не найден переданный параметр.");
     }
 }
