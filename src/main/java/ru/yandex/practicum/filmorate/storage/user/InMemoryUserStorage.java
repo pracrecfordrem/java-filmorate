@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -62,8 +63,8 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public User getUserById(Long userId) {
-        return users.get(userId);
+    public Optional<User> getUserById(Long userId) {
+        return Optional.of(users.get(userId));
     }
 
     @ExceptionHandler

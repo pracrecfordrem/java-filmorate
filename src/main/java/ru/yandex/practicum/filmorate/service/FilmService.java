@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FilmService {
@@ -22,30 +23,33 @@ public class FilmService {
     }
 
     public void addLike(Long filmId, Long userId) {
-        if (filmStorage.getFilmById(filmId) == null) {
+        Optional<Film> film = filmStorage.getFilmById(filmId);
+        if (film.isEmpty()) {
             throw new NotFoundException("Не найден фильм, которому присваивается лайк");
-        } else if (userStorage.getUserById(userId) == null) {
+        } else if (userStorage.getUserById(userId).isEmpty()) {
             throw new NotFoundException("Не найден пользователь, который ставит лайк");
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
-            filmStorage.getFilmById(filmId).getLikes().add(userId);
+            film.get().getLikes().add(userId);
         }
     }
 
     public void deleteLike(Long filmId, Long userId) {
-        if (filmStorage.getFilmById(filmId) == null) {
+        Optional<Film> film = filmStorage.getFilmById(filmId);
+        if (film.isEmpty()) {
             throw new NotFoundException("Не найден фильм, у которого удаляется лайк");
-        } else if (userStorage.getUserById(userId) == null) {
+        } else if (userStorage.getUserById(userId).isEmpty()) {
             throw new NotFoundException("Не найден пользователь, чей удаляется лайк");
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
-            filmStorage.getFilmById(filmId).getLikes().remove(userId);
+            film.get().getLikes().remove(userId);
         }
     }
 
     public List<Film> getPopularFilms(int count) {
+
         Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
         if (count <= 0) {
             throw new ValidationException("Count должен быть больше 0");
