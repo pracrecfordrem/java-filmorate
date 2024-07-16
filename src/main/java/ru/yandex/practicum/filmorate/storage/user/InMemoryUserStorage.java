@@ -64,7 +64,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public Optional<User> getUserById(Long userId) {
-        return Optional.of(users.get(userId));
+        return Optional.ofNullable(users.get(userId));
     }
 
     @ExceptionHandler
