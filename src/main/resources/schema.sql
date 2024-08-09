@@ -11,9 +11,6 @@ CREATE TABLE if not exists public.friendship (
   id SERIAL NOT NULL,
   initiator_id int8 NOT NULL,
   recipient_id int8 NOT NULL,
-  initiation_time timestamp NOT NULL,
-  acception_date timestamp,
-  acception_status bool DEFAULT false,
   PRIMARY KEY (id),
   CONSTRAINT friendship_initiator_id_fkey FOREIGN KEY (initiator_id) REFERENCES public.users(id),
   CONSTRAINT friendship_recipient_id_fkey FOREIGN KEY (recipient_id) REFERENCES public.users(id)
@@ -21,11 +18,10 @@ CREATE TABLE if not exists public.friendship (
 
 CREATE TABLE if not exists public.films (
   id SERIAL NOT NULL,
-  title varchar(40) NOT NULL,
-  produced int4 NOT NULL,
-  date_prod date,
-  kind varchar(10),
-  len_min int4,
+  name varchar(255) NOT NULL,
+  releaseDate date,
+  MPArating varchar(15),
+  duration int4,
   genre varchar(255),
   PRIMARY KEY (id)
 );

@@ -16,9 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@RestController
-@RequestMapping("/films")
-@Component
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();

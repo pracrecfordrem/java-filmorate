@@ -16,8 +16,6 @@ import java.util.Optional;
 
 
 @Slf4j
-@RestController
-@RequestMapping("/users")
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
