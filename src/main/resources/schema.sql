@@ -23,6 +23,7 @@ CREATE TABLE if not exists public.films (
   MPArating varchar(15),
   duration int4,
   genre varchar(255),
+  description varchar(1024),
   PRIMARY KEY (id)
 );
 

@@ -10,14 +10,18 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Optional;
 
 
 @Repository
-@Qualifier("FilmDbStorage")
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
+    private static final String INSERT_QUERY = "INSERT INTO films (name, releasedate, mparating, duration, description)" +
+            "VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_FOR_ID_QUERY = "SELECT ID FROM FILMS WHERE " +
+            "name = ?";
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
     }
@@ -29,7 +33,18 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        return null;
+        System.out.println(film.getName() + " " + film.getReleaseDate() + " " + film.getMPArating() + " " + film.getDescription() + " " + film.getDuration());
+        insert(
+                INSERT_QUERY,
+                film.getName(),
+                film.getReleaseDate(),
+                film.getMPArating(),
+                film.getDuration(),
+                film.getDescription()
+                );
+        long id = jdbc.queryForObject(SELECT_FOR_ID_QUERY,Long.class,film.getName());
+        film.setId(id);
+        return film;
     }
 
     @Override

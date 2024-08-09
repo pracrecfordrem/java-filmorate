@@ -1,13 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +24,18 @@ public class FilmService {
     public FilmService(@Autowired FilmStorage filmStorage, @Autowired UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+    }
+
+    public Collection<Film> findAll() {
+        return filmStorage.findAll();
+    }
+
+    public Film create(Film film) {
+        if (film.getReleaseDate().isBefore(Film.MIN_DATE)) {
+            throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
+        }
+        filmStorage.create(film);
+        return film;
     }
 
     public void addLike(Long filmId, Long userId) {

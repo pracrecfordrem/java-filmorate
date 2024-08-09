@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 public class Film {
-    static final LocalDate MIN_DATE = LocalDate.of(1895,12,28);
+    public static final LocalDate MIN_DATE = LocalDate.of(1895,12,28);
     private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;

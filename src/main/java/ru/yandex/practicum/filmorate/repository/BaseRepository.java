@@ -43,23 +43,13 @@ public class BaseRepository<T> {
         }
     }
 
-    protected long insert(String query, Object... params) {
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+    protected void insert(String query, Object... params) {
         jdbc.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                    .prepareStatement(query);
             for (int idx = 0; idx < params.length; idx++) {
                 ps.setObject(idx + 1, params[idx]);
             }
-            return ps;}, keyHolder);
-
-        Long id = keyHolder.getKeyAs(Long.class);
-
-        // Возвращаем id нового пользователя
-        if (id != null) {
-            return id;
-        } else {
-            throw new InternalServerException("Не удалось сохранить данные");
-        }
+            return ps;});
     }
 }

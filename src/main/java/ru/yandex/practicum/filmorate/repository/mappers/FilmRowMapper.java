@@ -20,6 +20,7 @@ public class FilmRowMapper implements RowMapper<Film> {
         film.setName(resultSet.getString("name"));
         film.setMPArating(resultSet.getString("MPArating"));
         film.setDescription(resultSet.getString("description"));
+        film.setGenre(resultSet.getString("genre"));
         film.setReleaseDate(resultSet.getDate("releaseDate").toLocalDate());
         film.setDuration(resultSet.getLong("duration"));
         return film;
