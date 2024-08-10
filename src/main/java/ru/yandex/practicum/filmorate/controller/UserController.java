@@ -1,16 +1,21 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
+@Qualifier("UserDbStorage")
 public class UserController {
     private final UserService userService;
 
@@ -56,4 +61,29 @@ public class UserController {
         return Map.of("error", "Произошла непредвиденная ошибка.");
     }
 
+    @PutMapping
+    public User update(@RequestBody @Valid User user) {
+        return userService.updateUser(user);
+    }
+
+    @PostMapping
+    public User create(@RequestBody @Valid User user) {
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может содержать пробелы");
+        } else if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
+        userService.create(user);
+        return user;
+    }
+
+    @GetMapping
+    public Collection<User> findAll() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<User> findOne(@PathVariable Long id) {
+        return userService.findOne(id);
+    }
 }

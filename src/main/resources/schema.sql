@@ -1,9 +1,9 @@
 CREATE TABLE if not exists public.users (
   id SERIAL NOT NULL,
-  username varchar(40) NOT NULL,
+  name varchar(40) NOT NULL,
   email varchar(255) NOT NULL,
-  password varchar(40) NOT NULL,
-  registration_date timestamp NOT NULL,
+  login varchar(255),
+  birthday date NOT NULL,
   PRIMARY KEY (id)
 );
 

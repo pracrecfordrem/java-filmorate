@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -76,6 +77,28 @@ public class UserService {
             }
             return res;
         }
+    }
+
+    public Optional<User> findOne(Long userId) {
+        return userStorage.getUserById(userId);
+    }
+
+    public User updateUser(User user) {
+        Optional<User> updatedUser = findOne(user.getId());
+        if (updatedUser.isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        } else {
+            userStorage.update(user);
+        }
+        return user;
+    }
+
+    public User create(User user) {
+        return userStorage.create(user);
+    }
+
+    public Collection<User> findAll() {
+        return userStorage.findAll();
     }
 
 }

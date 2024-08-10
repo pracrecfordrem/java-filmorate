@@ -30,6 +30,10 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
+    public Optional<Film> findOne(Long filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
     public Film create(Film film) {
         if (film.getReleaseDate().isBefore(Film.MIN_DATE)) {
             throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
@@ -76,5 +80,15 @@ public class FilmService {
             List<Film> res = filmStorage.findAll().stream().sorted(comparator).toList();
             return res.subList(0,count - 1);
         }
+    }
+
+    public Film updateFilm(Film film) {
+        Optional<Film> updatedFilm = findOne(film.getId());
+        if (updatedFilm.isEmpty()) {
+            throw new NotFoundException("Фильм не найден");
+        } else {
+            filmStorage.update(film);
+        }
+        return film;
     }
 }
