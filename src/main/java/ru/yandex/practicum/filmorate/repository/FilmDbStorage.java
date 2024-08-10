@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -31,6 +32,23 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "GENRE = ?, " +
             "DESCRIPTION = ? " +
             "WHERE ID = ?";
+
+    private static final String INSERT_LIKE_QUERY = "INSERT INTO LIKES (FILM_ID, USER_ID, MARK_TIME) " +
+            "VALUES(?, ?, ?)";
+    private static final String DELETE_LIKE_QUERY = "DELETE FROM LIKES WHERE FILM_ID = ? " +
+            "AND USER_ID = ?";
+    private static final String FIND_MOST_POPULAR = "WITH prep AS (\n" +
+            "             SELECT film_id,\n" +
+            "                    count(*) AS cnt\n" +
+            "               FROM likes\n" +
+            "              GROUP BY film_id\n" +
+            "             )\n" +
+            "SELECT f.* \n" +
+            "  FROM FILMS f\n" +
+            "  left JOIN prep\n" +
+            "    ON prep.film_id = f.ID \n" +
+            " ORDER BY prep.cnt DESC \n" +
+            " LIMIT ?\n";
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
     }
@@ -78,5 +96,20 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Optional<Film> getFilmById(Long filmId) {
         return super.findOne(FIND_ONE_QUERY,filmId);
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        super.insert(INSERT_LIKE_QUERY,filmId,userId, Instant.now());
+    }
+
+    @Override
+    public void deleteLike(Long filmId, Long userId) {
+        super.delete(DELETE_LIKE_QUERY,filmId,userId);
+    }
+
+    @Override
+    public Collection<Film> getPopularFilms(int count) {
+        return super.findMany(FIND_MOST_POPULAR,count);
     }
 }

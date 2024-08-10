@@ -51,7 +51,7 @@ public class FilmService {
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
-            film.get().getLikes().add(userId);
+            filmStorage.addLike(filmId, userId);
         }
     }
 
@@ -64,21 +64,18 @@ public class FilmService {
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
-            film.get().getLikes().remove(userId);
+            filmStorage.deleteLike(filmId,userId);
         }
     }
 
-    public List<Film> getPopularFilms(int count) {
-
-        Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
+    public Collection<Film> getPopularFilms(int count) {
         if (count <= 0) {
             throw new ValidationException("Count должен быть больше 0");
-       } else {
+        } else {
             if (count > filmStorage.findAll().size()) {
-                return filmStorage.findAll().stream().sorted(comparator).toList();
+                return filmStorage.findAll();
             }
-            List<Film> res = filmStorage.findAll().stream().sorted(comparator).toList();
-            return res.subList(0,count - 1);
+            return filmStorage.getPopularFilms(count);
         }
     }
 

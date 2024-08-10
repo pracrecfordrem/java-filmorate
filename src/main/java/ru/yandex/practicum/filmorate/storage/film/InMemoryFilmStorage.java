@@ -64,6 +64,21 @@ public class InMemoryFilmStorage implements FilmStorage {
         return Optional.ofNullable(films.get(filmId));
     }
 
+    @Override
+    public void addLike(Long filmId, Long userId) {
+
+    }
+
+    @Override
+    public void deleteLike(Long filmId, Long userId) {
+
+    }
+
+    @Override
+    public Collection<Film> getPopularFilms(int count) {
+        return null;
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(final ValidationException e) {

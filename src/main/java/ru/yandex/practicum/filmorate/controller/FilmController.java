@@ -40,7 +40,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@PathVariable("count") @RequestParam(defaultValue = "10") int count) {
+    public Collection<Film> getPopularFilms(@PathVariable("count") @RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
     }
 
