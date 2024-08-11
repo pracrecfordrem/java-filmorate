@@ -16,4 +16,12 @@ public interface UserStorage {
     public User update(User user);
 
     public Optional<User> getUserById(Long userId);
+
+    void addFriend(Long firstUserLogin, Long secondUserLogin);
+
+    Collection<User> getFriendList(Long id);
+
+    void deleteFriend(Long firstUserId, Long secondUserId);
+
+    Collection<User> getCommonFriends(Long firstUserId, Long secondUserId);
 }

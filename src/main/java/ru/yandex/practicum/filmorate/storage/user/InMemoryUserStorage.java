@@ -64,6 +64,26 @@ public class InMemoryUserStorage implements UserStorage {
         return Optional.ofNullable(users.get(userId));
     }
 
+    @Override
+    public void addFriend(Long firstUserLogin, Long secondUserLogin) {
+
+    }
+
+    @Override
+    public Collection<User> getFriendList(Long id) {
+        return null;
+    }
+
+    @Override
+    public void deleteFriend(Long firstUserId, Long secondUserId) {
+
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        return null;
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(final ValidationException e) {

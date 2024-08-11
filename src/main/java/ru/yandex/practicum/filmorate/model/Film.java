@@ -15,8 +15,8 @@ public class Film {
     private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
-    private String genre;
-    private String MPArating;
+    private HashSet<Long> genres_id;
+    private MPArating MPArating;
     @Size(max = 200, message = "Длина описания не может быть более 200 символов")
     private String description;
     private LocalDate releaseDate;

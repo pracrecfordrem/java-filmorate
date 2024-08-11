@@ -4,6 +4,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MPArating;
+import ru.yandex.practicum.filmorate.repository.mappers.MPAratingRowMapper;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.Instant;
@@ -15,21 +17,14 @@ import java.util.Optional;
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String FIND_ONE_QUERY = "SELECT * FROM films WHERE ID = ?";
-    private static final String INSERT_QUERY = "INSERT INTO films (name, releasedate, mparating, duration, genre, description)" +
-            "VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String SELECT_FOR_ID_QUERY = "SELECT ID FROM FILMS WHERE " +
-            "NAME = ? " +
-            "AND RELEASEDATE = ? " +
-            "AND MPARATING = ? " +
-            "AND DURATION = ? " +
-            "AND GENRE = ? " +
-            "AND DESCRIPTION = ? ";
+    private static final String INSERT_QUERY = "INSERT INTO films (name, releasedate, mparating_id, duration, description)" +
+            "VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_FOR_ID_QUERY = "SELECT MAX(ID) FROM FILMS ";
     private static final String UPDATE_QUERY = "UPDATE FILMS SET " +
             "NAME = ?," +
             "RELEASEDATE = ?, " +
             "MPARATING = ?, " +
             "DURATION = ?, " +
-            "GENRE = ?, " +
             "DESCRIPTION = ? " +
             "WHERE ID = ?";
 
@@ -49,6 +44,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "    ON prep.film_id = f.ID \n" +
             " ORDER BY prep.cnt DESC \n" +
             " LIMIT ?\n";
+    private static final String FIND_MPA = "SELECT * FROM MPARATING WHERE ID = ?";
+    private static final MPAratingRowMapper mPAratingRowMapper = new MPAratingRowMapper();
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
     }
@@ -60,23 +57,24 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Film create(Film film) {
+        Long MPAratingID;
+        if (film.getMPArating() == null) {
+            MPAratingID = null;
+        } else {
+            MPAratingID = film.getMPArating().getId();
+        };
         super.insert(
                 INSERT_QUERY,
                 film.getName(),
                 film.getReleaseDate(),
-                film.getMPArating(),
+                MPAratingID,
                 film.getDuration(),
-                film.getGenre(),
                 film.getDescription()
                 );
-        long id = jdbc.queryForObject(SELECT_FOR_ID_QUERY,Long.class,
-                film.getName(),
-                film.getReleaseDate(),
-                film.getMPArating(),
-                film.getDuration(),
-                film.getGenre(),
-                film.getDescription());
+
+        long id = jdbc.queryForObject(SELECT_FOR_ID_QUERY, Long.class);
         film.setId(id);
+        System.out.println(film.getMPArating());
         return film;
     }
 
@@ -85,9 +83,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         super.update(UPDATE_QUERY,
                     film.getName(),
                     film.getReleaseDate(),
-                    film.getMPArating(),
+                    film.getMPArating().getId(),
                     film.getDuration(),
-                    film.getGenre(),
                     film.getDescription(),
                     film.getId());
         return film;

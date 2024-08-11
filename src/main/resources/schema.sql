@@ -16,16 +16,32 @@ CREATE TABLE if not exists public.friendship (
   CONSTRAINT friendship_recipient_id_fkey FOREIGN KEY (recipient_id) REFERENCES public.users(id)
 );
 
+CREATE TABLE if not exists public.genre (
+    id SERIAL not null,
+    name varchar(255),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE if not exists public.mparating (
+    id SERIAL not null,
+    name varchar(255),
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE if not exists public.films (
   id SERIAL NOT NULL,
   name varchar(255) NOT NULL,
   releaseDate date,
-  MPArating varchar(15),
+  MPArating_id int4,
   duration int4,
-  genre varchar(255),
+  genre_id int4,
   description varchar(1024),
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT films_MPArating_id_fkey FOREIGN KEY (MPArating_id) REFERENCES public.mparating(id),
+  CONSTRAINT films_genre_id_fkey FOREIGN KEY (genre_id) REFERENCES public.genre(id)
 );
+
+
 
 
 CREATE TABLE if not exists public.likes (
@@ -37,3 +53,4 @@ CREATE TABLE if not exists public.likes (
   CONSTRAINT likes_film_id_fkey FOREIGN KEY (film_id) REFERENCES public.films(id),
   CONSTRAINT likes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
+

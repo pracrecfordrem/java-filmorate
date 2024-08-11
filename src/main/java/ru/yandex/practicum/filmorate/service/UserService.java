@@ -8,10 +8,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.time.Instant;
+import java.time.chrono.ChronoLocalDate;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -22,30 +21,31 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public User addFriend(Long firstUserLogin, Long secondUserLogin) {
-        Optional<User> first = userStorage.getUserById(firstUserLogin);
-        Optional<User> second = userStorage.getUserById(secondUserLogin);
+    public User addFriend(Long firstUserId, Long secondUserId) {
+        Optional<User> first = userStorage.getUserById(firstUserId);
+        Optional<User> second = userStorage.getUserById(secondUserId);
         if (first.isEmpty() || second.isEmpty()) {
             throw new NotFoundException("Нельзя добавить в друзья несуществующих пользователей");
-        } else if (firstUserLogin <= 0 || secondUserLogin <= 0) {
-            throw new ValidationException(firstUserLogin + " " + secondUserLogin);
+        } else if (firstUserId <= 0 || secondUserId <= 0) {
+            throw new ValidationException(firstUserId + " " + secondUserId);
         } else {
-            first.get().getFriendsIds().add(secondUserLogin);
-            second.get().getFriendsIds().add(firstUserLogin);
+            userStorage.addFriend(firstUserId,secondUserId);
             return first.get();
         }
     }
 
-    public void deleteFriend(Long firstUserLogin, Long secondUserLogin) {
-        Optional<User> first = userStorage.getUserById(firstUserLogin);
-        Optional<User> second = userStorage.getUserById(secondUserLogin);
+    public void deleteFriend(Long firstUserId, Long secondUserId) {
+        Optional<User> first = userStorage.getUserById(firstUserId);
+        Optional<User> second = userStorage.getUserById(secondUserId);
         if (first.isEmpty() || second.isEmpty()) {
             throw new NotFoundException("Нельзя удалить из друзей несуществующих пользователей");
-        } else if (firstUserLogin <= 0 || secondUserLogin <= 0) {
-            throw new ValidationException(firstUserLogin + " " + secondUserLogin);
+        } else if (firstUserId <= 0 || secondUserId <= 0) {
+            throw new ValidationException(firstUserId + " " + secondUserId);
         } else {
-            first.get().getFriendsIds().remove(secondUserLogin);
-            second.get().getFriendsIds().remove(firstUserLogin);
+            first.get().getFriendsIds().remove(secondUserId);
+            second.get().getFriendsIds().remove(firstUserId);
+            System.out.println(firstUserId + " " + secondUserId);
+            userStorage.deleteFriend(firstUserId, secondUserId);
         }
     }
 
@@ -54,28 +54,18 @@ public class UserService {
          if (searchedUser.isEmpty()) {
              throw new NotFoundException("Запрошен список друзей у несуществующего пользователя");
          }
-         Collection<User> res = new HashSet<User>();
-        for (Long friendId: searchedUser.get().getFriendsIds()) {
-            res.add(userStorage.getUserById(friendId).get());
-        }
-        return res;
+        return userStorage.getFriendList(id);
     }
 
-    public Collection<User> getCommonFriendList(Long firstUserLogin, Long secondUserLogin) {
-        Optional<User> first = userStorage.getUserById(firstUserLogin);
-        Optional<User> second = userStorage.getUserById(secondUserLogin);
+    public Collection<User> getCommonFriendList(Long firstUserId, Long secondUserId) {
+        Optional<User> first = userStorage.getUserById(firstUserId);
+        Optional<User> second = userStorage.getUserById(secondUserId);
         if (first.isEmpty() || second.isEmpty()) {
             throw new NotFoundException("Нельзя найти список общих друзей у несуществующих пользователей");
-        } else if (firstUserLogin <= 0 || secondUserLogin <= 0) {
-            throw new ValidationException(firstUserLogin + " " + secondUserLogin);
+        } else if (firstUserId <= 0 || secondUserId <= 0) {
+            throw new ValidationException(firstUserId + " " + secondUserId);
         } else {
-            Set<Long> result = userStorage.getUserById(firstUserLogin).get().getFriendsIds();
-            result.retainAll(userStorage.getUserById(secondUserLogin).get().getFriendsIds());
-            Collection<User> res = new HashSet<User>();
-            for (Long friendId: result) {
-                res.add(userStorage.getUserById(friendId).get());
-            }
-            return res;
+            return userStorage.getCommonFriends(firstUserId,secondUserId);
         }
     }
 

@@ -9,6 +9,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Optional;
@@ -72,7 +76,11 @@ public class UserController {
             throw new ValidationException("Логин не может содержать пробелы");
         } else if (user.getName() == null) {
             user.setName(user.getLogin());
-        }
+        } else if (!user.getEmail().contains("@")) {
+            throw new ValidationException("Email должен содержать @");
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        };
         userService.create(user);
         return user;
     }
