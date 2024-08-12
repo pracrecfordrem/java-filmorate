@@ -113,6 +113,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Collection<Film> getPopularFilms(int count) {
         Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
+        System.out.println(super.findMany(FIND_MOST_POPULAR,count).stream().sorted(comparator).toList());
         return super.findMany(FIND_MOST_POPULAR,count).stream().sorted(comparator).toList();
     }
 }

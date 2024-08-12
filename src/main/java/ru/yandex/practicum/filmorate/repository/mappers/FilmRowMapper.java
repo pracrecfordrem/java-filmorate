@@ -21,6 +21,7 @@ public class FilmRowMapper implements RowMapper<Film> {
     private static final String FIND_MPA_RATING = "SELECT * FROM MPArating where id = ?";
     private static final String FIND_GENRES = "SELECT GENRE_ID FROM FILM_GENRE where FILM_id = ?";
     private static final String FIND_GENRE = "SELECT * FROM GENRE where id = ?";
+    private static final String FIND_LIKES = "SELECT USER_ID FROM LIKES where FILM_id = ?";
     protected final JdbcTemplate jdbc;
 
     public FilmRowMapper(JdbcTemplate jdbc) {
@@ -37,8 +38,17 @@ public class FilmRowMapper implements RowMapper<Film> {
             Long longg = rs1.getLong("GENRE_ID");
             return longg;
         }, film.getId());
+
         for (Long id: genreids) {
             film.getGenres().add(jdbc.queryForObject(FIND_GENRE,GENRE_ROW_MAPPER,id));
+        }
+
+        List<Long> likeIds = jdbc.query(FIND_LIKES, (rs1, rowNum1) -> {
+            Long longg = rs1.getLong("USER_ID");
+            return longg;
+        }, film.getId());
+        for (Long id: likeIds) {
+            film.getLikes().add(id);
         }
         film.setDescription(rs.getString("description"));
         film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
