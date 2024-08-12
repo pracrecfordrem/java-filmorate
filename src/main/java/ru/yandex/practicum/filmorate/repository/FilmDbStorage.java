@@ -14,11 +14,19 @@ import java.util.*;
 
 @Repository
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
+
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
-    private static final String FIND_ONE_QUERY = "SELECT * FROM films WHERE ID = ?";
-    private static final String INSERT_QUERY = "INSERT INTO films (name, releasedate, mparating_id, duration, description)" +
+
+    private static final String FIND_ONE_QUERY = "SELECT * FROM films " +
+            "WHERE ID = ?";
+
+    private static final String INSERT_QUERY = "INSERT INTO films (name, " +
+            "releasedate, mparating_id, duration, description)" +
             "VALUES (?, ?, ?, ?, ?)";
-    private static final String SELECT_FOR_ID_QUERY = "SELECT MAX(ID) FROM FILMS ";
+
+    private static final String SELECT_FOR_ID_QUERY = "SELECT MAX(ID) " +
+            "FROM FILMS ";
+
     private static final String UPDATE_QUERY = "UPDATE FILMS SET " +
             "NAME = ?," +
             "RELEASEDATE = ?, " +
@@ -29,8 +37,10 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     private static final String INSERT_LIKE_QUERY = "INSERT INTO LIKES (FILM_ID, USER_ID, MARK_TIME) " +
             "VALUES(?, ?, ?)";
+
     private static final String DELETE_LIKE_QUERY = "DELETE FROM LIKES WHERE FILM_ID = ? " +
             "AND USER_ID = ?";
+
     private static final String FIND_MOST_POPULAR = "WITH prep AS (\n" +
             "             SELECT film_id,\n" +
             "                    count(*) AS cnt\n" +
@@ -43,12 +53,14 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "    ON prep.film_id = f.ID \n" +
             " ORDER BY prep.cnt DESC \n" +
             " LIMIT ?\n";
+
     private static final String FIND_MPA = "SELECT * FROM MPARATING WHERE ID = ?";
+
     private static final String DELETE_FILM_GENRES = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?";
+
     private static final String INSERT_FILM_GENRES = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) " +
             "VALUES (?, ?)";
 
-    private static final GenreRowMapper M_P_ARATING_ROW_MAPPER = new GenreRowMapper();
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
     }
@@ -60,17 +72,17 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        Long MPAratingID;
+        Long mpa;
         if (film.getMpa() == null) {
-            MPAratingID = null;
+            mpa = null;
         } else {
-            MPAratingID = film.getMpa().getId();
+            mpa = film.getMpa().getId();
         }
         super.insert(
                 INSERT_QUERY,
                 film.getName(),
                 film.getReleaseDate(),
-                MPAratingID,
+                mpa,
                 film.getDuration(),
                 film.getDescription()
                 );
