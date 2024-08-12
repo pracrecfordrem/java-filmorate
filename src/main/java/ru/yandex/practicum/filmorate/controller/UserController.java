@@ -77,7 +77,7 @@ public class UserController {
             throw new ValidationException("Email должен содержать @");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
-        };
+        }
         userService.create(user);
         return user;
     }

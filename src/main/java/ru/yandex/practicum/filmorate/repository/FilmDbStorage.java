@@ -65,7 +65,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             MPAratingID = null;
         } else {
             MPAratingID = film.getMpa().getId();
-        };
+        }
         super.insert(
                 INSERT_QUERY,
                 film.getName(),
