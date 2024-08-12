@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.repository.mappers.GenreRowMapper;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.Instant;
@@ -99,16 +98,16 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        Long MPAratingID;
+        Long mpa;
         if (film.getMpa() == null) {
-            MPAratingID = null;
+            mpa = null;
         } else {
-            MPAratingID = film.getMpa().getId();
+            mpa = film.getMpa().getId();
         }
         super.update(UPDATE_QUERY,
                     film.getName(),
                     film.getReleaseDate(),
-                    MPAratingID,
+                    mpa,
                     film.getDuration(),
                     film.getDescription(),
                     film.getId());
