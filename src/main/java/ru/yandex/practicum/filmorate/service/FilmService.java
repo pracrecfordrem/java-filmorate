@@ -70,13 +70,11 @@ public class FilmService {
         }
     }
 
-    public Collection<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count) {
+        Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
         if (count <= 0) {
             throw new ValidationException("Count должен быть больше 0");
         } else {
-            if (count > filmStorage.findAll().size()) {
-                return filmStorage.findAll();
-            }
             return filmStorage.getPopularFilms(count);
         }
     }

@@ -4,13 +4,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.mappers.GenreRowMapper;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
 
 
 @Repository
@@ -45,6 +44,10 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             " ORDER BY prep.cnt DESC \n" +
             " LIMIT ?\n";
     private static final String FIND_MPA = "SELECT * FROM MPARATING WHERE ID = ?";
+    private static final String DELETE_FILM_GENRES = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?";
+    private static final String INSERT_FILM_GENRES = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) " +
+            "VALUES (?, ?)";
+
     private static final GenreRowMapper M_P_ARATING_ROW_MAPPER = new GenreRowMapper();
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
@@ -74,6 +77,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
         long id = jdbc.queryForObject(SELECT_FOR_ID_QUERY, Long.class);
         film.setId(id);
+        TreeSet<Genre> genres = film.getGenres();
+        super.delete(DELETE_FILM_GENRES, film.getId());
+        for (Genre genre: genres) {
+            super.insert(INSERT_FILM_GENRES,film.getId(),genre.getId());
+        }
         return film;
     }
 
@@ -84,7 +92,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             MPAratingID = null;
         } else {
             MPAratingID = film.getMpa().getId();
-        };
+        }
         super.update(UPDATE_QUERY,
                     film.getName(),
                     film.getReleaseDate(),
@@ -92,6 +100,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                     film.getDuration(),
                     film.getDescription(),
                     film.getId());
+        TreeSet<Genre> genres = film.getGenres();
+        super.delete(DELETE_FILM_GENRES, film.getId());
+        for (Genre genre: genres) {
+            super.insert(INSERT_FILM_GENRES,film.getId(),genre.getId());
+        }
         return film;
     }
 
@@ -111,9 +124,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count) {
         Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
-        System.out.println(super.findMany(FIND_MOST_POPULAR,count).stream().sorted(comparator).toList());
         return super.findMany(FIND_MOST_POPULAR,count).stream().sorted(comparator).toList();
     }
 }

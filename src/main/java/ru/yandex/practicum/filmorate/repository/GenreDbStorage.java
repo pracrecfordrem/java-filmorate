@@ -24,7 +24,6 @@ public class GenreDbStorage extends BaseRepository<Genre> {
     }
 
     public Optional<Genre> findOne(Long id) {
-        //System.out.println(FIND_ONE_QUERY + " " + id);
         return super.findOne(FIND_ONE_QUERY,id);
     }
 }

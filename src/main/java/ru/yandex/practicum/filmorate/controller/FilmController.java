@@ -44,7 +44,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@PathVariable("count") @RequestParam(defaultValue = "10") int count) {
+    public List<Film> getPopularFilms(@PathVariable("count") @RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
     }
 
@@ -86,7 +86,7 @@ public class FilmController {
     }
 
     boolean checkGenres(Film film) {
-        HashSet<Genre> genres = film.getGenres();
+        TreeSet<Genre> genres = film.getGenres();
         if (genres == null) {
             return true;
         }

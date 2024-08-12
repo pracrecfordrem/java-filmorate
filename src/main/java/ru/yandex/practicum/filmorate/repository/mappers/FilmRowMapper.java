@@ -5,13 +5,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
+
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -38,11 +36,9 @@ public class FilmRowMapper implements RowMapper<Film> {
             Long longg = rs1.getLong("GENRE_ID");
             return longg;
         }, film.getId());
-
         for (Long id: genreids) {
             film.getGenres().add(jdbc.queryForObject(FIND_GENRE,GENRE_ROW_MAPPER,id));
         }
-
         List<Long> likeIds = jdbc.query(FIND_LIKES, (rs1, rowNum1) -> {
             Long longg = rs1.getLong("USER_ID");
             return longg;

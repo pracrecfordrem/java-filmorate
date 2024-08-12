@@ -44,7 +44,6 @@ public class UserService {
         } else {
             first.get().getFriendsIds().remove(secondUserId);
             second.get().getFriendsIds().remove(firstUserId);
-            System.out.println(firstUserId + " " + secondUserId);
             userStorage.deleteFriend(firstUserId, secondUserId);
         }
     }

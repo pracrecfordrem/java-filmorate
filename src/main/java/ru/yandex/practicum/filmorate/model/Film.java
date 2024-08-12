@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 @Data
@@ -14,7 +15,7 @@ public class Film {
     private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
-    private HashSet<Genre> genres;
+    private TreeSet<Genre> genres = new TreeSet<>();
     private MPA mpa;
     @Size(max = 200, message = "Длина описания не может быть более 200 символов")
     private String description;
