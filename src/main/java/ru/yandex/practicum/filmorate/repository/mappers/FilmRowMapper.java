@@ -33,13 +33,10 @@ public class FilmRowMapper implements RowMapper<Film> {
         film.setId(rs.getLong("id"));
         film.setName(rs.getString("name"));
         film.setMpa(jdbc.queryForObject(FIND_MPA_RATING, MPARATING_ROW_MAPPER,rs.getLong("MPArating_id")));
-        HashSet<Genre> genres = new HashSet<>();
-        System.out.println("here");
         List<Long> genreids = jdbc.query(FIND_GENRES, (rs1, rowNum1) -> {
             Long longg = rs1.getLong("GENRE_ID");
             return longg;
         }, film.getId());
-        System.out.println(genreids);
         for (Long id: genreids) {
             film.getGenres().add(jdbc.queryForObject(FIND_GENRE,GENRE_ROW_MAPPER,id));
         }

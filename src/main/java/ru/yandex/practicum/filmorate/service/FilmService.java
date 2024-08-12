@@ -51,6 +51,7 @@ public class FilmService {
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
+            film.get().getLikes().add(userId);
             filmStorage.addLike(filmId, userId);
         }
     }
@@ -64,6 +65,7 @@ public class FilmService {
         } else if (filmId <= 0 || userId <= 0) {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
+            film.get().getLikes().remove(userId);
             filmStorage.deleteLike(filmId,userId);
         }
     }

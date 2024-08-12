@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 
 
@@ -111,6 +112,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilms(int count) {
-        return super.findMany(FIND_MOST_POPULAR,count);
+        Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
+        return super.findMany(FIND_MOST_POPULAR,count).stream().sorted(comparator).toList();
     }
 }
