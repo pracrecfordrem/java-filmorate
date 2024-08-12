@@ -8,10 +8,12 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.Optional;
-@Repository
 
+@Repository
 public class GenreDbStorage extends BaseRepository<Genre> {
+
     private static final String FIND_MANY = "SELECT * FROM GENRE";
+
     private static final String FIND_ONE_QUERY = "SELECT * FROM GENRE WHERE ID = ?";
 
 
