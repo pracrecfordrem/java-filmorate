@@ -6,17 +6,21 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPArating;
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class FilmRowMapper implements RowMapper<Film> {
-    private static final MPAratingRowMapper mparatingRowMapper = new MPAratingRowMapper();
+    private static final MPARowMapper MPARATING_ROW_MAPPER = new MPARowMapper();
+    private static final GenreRowMapper GENRE_ROW_MAPPER = new GenreRowMapper();
     private static final String FIND_MPA_RATING = "SELECT * FROM MPArating where id = ?";
+    private static final String FIND_GENRES = "SELECT GENRE_ID FROM FILM_GENRE where FILM_id = ?";
+    private static final String FIND_GENRE = "SELECT * FROM GENRE where id = ?";
     protected final JdbcTemplate jdbc;
 
     public FilmRowMapper(JdbcTemplate jdbc) {
@@ -28,11 +32,20 @@ public class FilmRowMapper implements RowMapper<Film> {
         Film film = new Film();
         film.setId(rs.getLong("id"));
         film.setName(rs.getString("name"));
-        film.setMPArating(jdbc.queryForObject(FIND_MPA_RATING,mparatingRowMapper,rs.getLong("MPArating_id")));
+        film.setMpa(jdbc.queryForObject(FIND_MPA_RATING, MPARATING_ROW_MAPPER,rs.getLong("MPArating_id")));
+        HashSet<Genre> genres = new HashSet<>();
+        System.out.println("here");
+        List<Long> genreids = jdbc.query(FIND_GENRES, (rs1, rowNum1) -> {
+            Long longg = rs1.getLong("GENRE_ID");
+            return longg;
+        }, film.getId());
+        System.out.println(genreids);
+        for (Long id: genreids) {
+            film.getGenres().add(jdbc.queryForObject(FIND_GENRE,GENRE_ROW_MAPPER,id));
+        }
         film.setDescription(rs.getString("description"));
         film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
         film.setDuration(rs.getLong("duration"));
-        //System.out.println("mpa:" + film.getMPArating());
         return film;
     }
 }

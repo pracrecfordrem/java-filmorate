@@ -4,7 +4,6 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,8 +14,8 @@ public class Film {
     private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
-    private HashSet<Long> genres_id;
-    private MPArating MPArating;
+    private HashSet<Genre> genres;
+    private MPA mpa;
     @Size(max = 200, message = "Длина описания не может быть более 200 символов")
     private String description;
     private LocalDate releaseDate;

@@ -34,14 +34,19 @@ CREATE TABLE if not exists public.films (
   releaseDate date,
   MPArating_id int4,
   duration int4,
-  genre_id int4,
   description varchar(1024),
   PRIMARY KEY (id),
-  CONSTRAINT films_MPArating_id_fkey FOREIGN KEY (MPArating_id) REFERENCES public.mparating(id),
-  CONSTRAINT films_genre_id_fkey FOREIGN KEY (genre_id) REFERENCES public.genre(id)
+  CONSTRAINT films_MPArating_id_fkey FOREIGN KEY (MPArating_id) REFERENCES public.mparating(id)
 );
 
-
+CREATE TABLE IF NOT EXISTS public.film_genre (
+  id serial not null,
+  film_id int4,
+  genre_id int4,
+  PRIMARY KEY (id),
+  CONSTRAINT film_genre_film_id_fkey FOREIGN KEY (film_id) REFERENCES public.films(id),
+  CONSTRAINT film_genre_genre_id_fkey FOREIGN KEY (genre_id) REFERENCES public.genre(id)
+);
 
 
 CREATE TABLE if not exists public.likes (

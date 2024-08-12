@@ -4,8 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MPArating;
-import ru.yandex.practicum.filmorate.repository.mappers.MPAratingRowMapper;
+import ru.yandex.practicum.filmorate.repository.mappers.GenreRowMapper;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.Instant;
@@ -23,7 +22,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String UPDATE_QUERY = "UPDATE FILMS SET " +
             "NAME = ?," +
             "RELEASEDATE = ?, " +
-            "MPARATING = ?, " +
+            "MPARATING_ID = ?, " +
             "DURATION = ?, " +
             "DESCRIPTION = ? " +
             "WHERE ID = ?";
@@ -45,7 +44,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             " ORDER BY prep.cnt DESC \n" +
             " LIMIT ?\n";
     private static final String FIND_MPA = "SELECT * FROM MPARATING WHERE ID = ?";
-    private static final MPAratingRowMapper mPAratingRowMapper = new MPAratingRowMapper();
+    private static final GenreRowMapper M_P_ARATING_ROW_MAPPER = new GenreRowMapper();
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
     }
@@ -58,10 +57,10 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Film create(Film film) {
         Long MPAratingID;
-        if (film.getMPArating() == null) {
+        if (film.getMpa() == null) {
             MPAratingID = null;
         } else {
-            MPAratingID = film.getMPArating().getId();
+            MPAratingID = film.getMpa().getId();
         };
         super.insert(
                 INSERT_QUERY,
@@ -74,16 +73,21 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
         long id = jdbc.queryForObject(SELECT_FOR_ID_QUERY, Long.class);
         film.setId(id);
-        System.out.println(film.getMPArating());
         return film;
     }
 
     @Override
     public Film update(Film film) {
+        Long MPAratingID;
+        if (film.getMpa() == null) {
+            MPAratingID = null;
+        } else {
+            MPAratingID = film.getMpa().getId();
+        };
         super.update(UPDATE_QUERY,
                     film.getName(),
                     film.getReleaseDate(),
-                    film.getMPArating().getId(),
+                    MPAratingID,
                     film.getDuration(),
                     film.getDescription(),
                     film.getId());
