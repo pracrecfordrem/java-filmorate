@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.user;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -16,9 +15,6 @@ import java.util.Optional;
 
 
 @Slf4j
-@RestController
-@RequestMapping("/users")
-@Component
 public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
 
@@ -65,6 +61,26 @@ public class InMemoryUserStorage implements UserStorage {
 
     public Optional<User> getUserById(Long userId) {
         return Optional.ofNullable(users.get(userId));
+    }
+
+    @Override
+    public void addFriend(Long firstUserLogin, Long secondUserLogin) {
+
+    }
+
+    @Override
+    public Collection<User> getFriendList(Long id) {
+        return null;
+    }
+
+    @Override
+    public void deleteFriend(Long firstUserId, Long secondUserId) {
+
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        return null;
     }
 
     @ExceptionHandler

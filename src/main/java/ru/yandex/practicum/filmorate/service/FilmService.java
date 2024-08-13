@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,22 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
+    public Collection<Film> findAll() {
+        return filmStorage.findAll();
+    }
+
+    public Optional<Film> findOne(Long filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
+    public Film create(Film film) {
+        if (film.getReleaseDate().isBefore(Film.MIN_DATE)) {
+            throw new ValidationException("Дата фильма не может быть ранее 28 декабря 1895 года.");
+        }
+        filmStorage.create(film);
+        return film;
+    }
+
     public void addLike(Long filmId, Long userId) {
         Optional<Film> film = filmStorage.getFilmById(filmId);
         if (film.isEmpty()) {
@@ -32,6 +49,7 @@ public class FilmService {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
             film.get().getLikes().add(userId);
+            filmStorage.addLike(filmId, userId);
         }
     }
 
@@ -45,20 +63,26 @@ public class FilmService {
             throw new ValidationException("Некорректный формат переданных параметров");
         } else {
             film.get().getLikes().remove(userId);
+            filmStorage.deleteLike(filmId,userId);
         }
     }
 
     public List<Film> getPopularFilms(int count) {
-
         Comparator<Film> comparator = Comparator.comparing(film -> film.getLikes().size(), Comparator.reverseOrder());
         if (count <= 0) {
             throw new ValidationException("Count должен быть больше 0");
-       } else {
-            if (count > filmStorage.findAll().size()) {
-                return filmStorage.findAll().stream().sorted(comparator).toList();
-            }
-            List<Film> res = filmStorage.findAll().stream().sorted(comparator).toList();
-            return res.subList(0,count - 1);
+        } else {
+            return filmStorage.getPopularFilms(count);
         }
+    }
+
+    public Film updateFilm(Film film) {
+        Optional<Film> updatedFilm = findOne(film.getId());
+        if (updatedFilm.isEmpty()) {
+            throw new NotFoundException("Фильм не найден");
+        } else {
+            filmStorage.update(film);
+        }
+        return film;
     }
 }
